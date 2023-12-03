@@ -1,0 +1,463 @@
+# # Time Series Analysis
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# In[2]:
+
+
+import glob
+
+
+file_paths = glob.glob(r'D:\DataSets\individual_stocks\individual_stocks_5yr/*csv')
+
+
+
+# In[3]:
+
+
+file_paths
+
+
+# In[4]:
+
+
+len(file_paths)
+
+
+# In[5]:
+
+
+company_list =[r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\AAPL_data.csv',
+              r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\AMZN_data.csv',
+              r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\GOOG_data.csv',
+              r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\MNST_data.csv',]
+
+
+# In[6]:
+
+
+import warnings
+from warnings import filterwarnings
+filterwarnings('ignore')
+
+
+# In[7]:
+
+
+all_data = pd.DataFrame()
+for file in company_list:
+    current_df = pd.read_csv(file)
+    all_data =current_df.append(all_data , ignore_index = True)
+
+
+# In[8]:
+
+
+company_list
+
+
+# In[9]:
+
+
+all_data.shape
+
+
+# In[10]:
+
+
+all_data.head(6)
+
+
+# In[11]:
+
+
+all_data['Name'].unique()
+
+
+# In[12]:
+
+
+all_data.isnull().sum()
+
+
+# In[13]:
+
+
+all_data.dtypes
+
+
+# In[14]:
+
+
+all_data['date'] = pd.to_datetime(all_data['date'])
+
+
+# In[15]:
+
+
+all_data['date']
+
+
+# In[16]:
+
+
+tech_list = all_data['Name'].unique()
+
+
+# In[17]:
+
+
+tech_list
+
+
+# In[18]:
+
+
+plt.figure(figsize=(20,10))
+for index, company in enumerate (tech_list , 1):
+    plt.subplot(2 , 2, index)
+    filter1 =  all_data['Name']==company
+    df = all_data[filter1]
+    plt.plot(df['date'] , df['close'])
+    plt .title(company)
+
+
+# In[19]:
+
+
+all_data['close'].rolling(window = 10).mean().head(14)
+
+
+# In[20]:
+
+
+new_data =all_data.copy()
+
+
+# In[21]:
+
+
+ma_day =[10 , 20, 50]
+for ma in ma_day:
+    new_data['close_' + str(ma)]=new_data['close'].rolling(ma).mean()
+
+
+# In[22]:
+
+
+new_data
+
+
+# In[23]:
+
+
+new_data.tail(7)
+
+
+# In[24]:
+
+
+new_data.set_index('date', inplace = True)
+
+
+# In[25]:
+
+
+new_data
+
+
+# In[26]:
+
+
+plt.figure(figsize=(25,15))
+for index, company in enumerate (tech_list , 1):
+    plt.subplot(2 , 2, index)
+    filter1 =  new_data['Name']==company
+    df = new_data[filter1]
+    df[['close_10', 'close_20', 'close_50']].plot(ax = plt.gca())
+    plt .title(company)
+
+
+# In[ ]:
+
+
+
+
+
+# In[27]:
+
+
+apple =pd.read_csv(r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\AAPL_data.csv')
+
+
+# In[28]:
+
+
+apple.head(6)
+
+
+# In[29]:
+
+
+apple['close']
+
+
+# In[30]:
+
+
+Google =pd.read_csv( r'D:\\DataSets\\individual_stocks\\individual_stocks_5yr\\GOOG_data.csv')
+
+
+# In[31]:
+
+
+Google['close']
+
+
+# In[32]:
+
+
+apple['Daily return(in %)'] = apple['close'].pct_change()*100
+
+
+# In[33]:
+
+
+apple.head(4)
+
+
+# In[34]:
+
+
+import plotly.express as px
+
+
+# In[35]:
+
+
+px.line(apple , x = "date", y = "Daily return(in %)")
+
+
+# performing resampling analysis of closing price
+
+# In[36]:
+
+
+apple.dtypes
+
+
+# In[37]:
+
+
+apple['date'] = pd.to_datetime(apple['date'])
+
+
+# In[38]:
+
+
+apple['date']
+
+
+# In[39]:
+
+
+apple.head(6)
+
+
+# In[40]:
+
+
+apple.set_index('date' , inplace = True)
+
+
+# In[41]:
+
+
+apple.head(4)
+
+
+# In[42]:
+
+
+apple['close'].resample("m").mean()
+
+
+# In[43]:
+
+
+apple['close'].resample("m").mean().plot()
+
+
+# In[44]:
+
+
+apple['close'].resample("y").mean()
+
+
+# In[45]:
+
+
+apple['close'].resample("y").mean().plot()
+
+
+# In[46]:
+
+
+apple['close'].resample("Q").mean()
+
+
+# In[47]:
+
+
+apple['close'].resample("Q").mean().plot()
+
+
+# Checking if the closing prices of these tech companies are correlated or Not
+
+# Corealtion analysis  pairwise scatter plot non daignol plot are 
+
+# In[48]:
+
+
+company_list[0]
+
+
+# In[49]:
+
+
+app = pd.read_csv(company_list[0])
+amzn = pd.read_csv(company_list[1])
+google = pd.read_csv(company_list[2])
+msft = pd.read_csv(company_list[3])
+
+
+# In[50]:
+
+
+closing_price = pd.DataFrame()
+
+
+# In[51]:
+
+
+google = pd.read_csv(company_list[2])
+
+
+# In[52]:
+
+
+app['close']
+
+
+# In[53]:
+
+
+closing_price['apple_close'] = app['close']
+closing_price['amzon_close'] =amzn ['close']
+closing_price['google_close'] = google['close']
+closing_price['microsoft_close'] = msft['close']
+
+
+# In[54]:
+
+
+closing_price['apple_close']
+
+
+# In[55]:
+
+
+closing_price
+
+
+# In[56]:
+
+
+sns.pairplot(closing_price)
+
+
+# In[57]:
+
+
+closing_price.corr()
+
+
+# In[58]:
+
+
+sns.heatmap(closing_price.corr(), annot = True)
+
+
+# analyse whether daily change in Closing price of stocks or daily return in stock are corelated or not 
+
+# pairgrid
+
+# In[59]:
+
+
+closing_price
+
+
+# In[60]:
+
+
+closing_price['apple_close']
+
+
+# In[61]:
+
+
+closing_price['apple_close'].shift(1)
+
+
+# In[62]:
+
+
+(closing_price['apple_close'] - closing_price['apple_close'].shift(1))/closing_price['apple_close'].shift(1) *100
+
+
+# In[63]:
+
+
+for col in closing_price.columns:
+    closing_price[col + '_pct_change']= (closing_price[col] - closing_price[col].shift(1))/closing_price[col].shift(1) *100
+    
+
+
+# In[64]:
+
+
+closing_price
+
+
+# In[65]:
+
+
+closing_price.columns
+
+
+# In[66]:
+
+
+clsing_p =closing_price[['apple_close_pct_change', 'amzon_close_pct_change',
+       'google_close_pct_change', 'microsoft_close_pct_change']]
+
+
+# In[67]:
+
+
+clsing_p
+
+
+# In[148]:
+
+
+g = sns.PairGrid(data = clsing_p)
+g.map_diag(sns.histplot)
+g.map_lower(sns.scatterplot)
+g.map_upper(sns.kdeplot)
