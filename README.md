@@ -1,9 +1,11 @@
 # Time-Series-analysis
 Time Series Analysis with Stock Data
+
 Overview:
 This project involves the analysis of time series data from the stock market, focusing on multiple tech companies. I utilized Python and various data science libraries to explore, visualize, and derive insights from the historical stock prices.
 
 Key Features:
+
 Data Collection:
 Gathered stock data for tech companies such as Apple, Amazon, Google, and Microsoft.
 
@@ -21,6 +23,7 @@ Resampling Analysis:
 Explored resampling techniques to analyze monthly, quarterly, and yearly trends in closing prices.
 
 Correlation Analysis:
+
 Investigated the correlation between the closing prices of different tech companies.
 Explored the correlation between the daily percentage changes in stock prices.
 Technologies Used:
